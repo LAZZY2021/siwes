@@ -1,0 +1,12 @@
+{
+    "name": "solomon/siwes-tested",
+    "description": "SIWES Management System for student allocation",
+    "autoload": {
+        "psr-4": {
+            "Solomon\\SiwesTested\\": "src/"
+        }
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "1.29"
+    }
+}
