@@ -47,9 +47,10 @@ $adm=mysqli_fetch_assoc($mus);
                     <?php echo ucfirst($me['firstname'])?></a>
             </div>
 
-            <div style="color: white;
-padding: 15px 50px 5px 50px; text-align:center;
-font-size: 16px;">
+            <div style="color: white;padding: 15px 50px 5px 50px; text-align:center;font-size: 16px;">
+          <a href="dashboard.php" class="btn btn-danger square-btn-adjust" style="float: left; margin-left:10px;">Back</a>
+    
+    
                 <font style="font-weight:bold; font-size:25px; font-family:Comic Sans MS;">SIWES MANAGEMENT SYSTEM
                     
                 </font><a href="logout.php" class="btn btn-danger square-btn-adjust" style="float: right;">Logout</a>
@@ -103,7 +104,7 @@ font-size: 16px;">
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12">
-                        <h2 style="font-size:26px;">Introduction Letter</h2>
+                        <!-- <h2 style="font-size:26px;">Introduction Letter</h2> -->
 
                     </div>
                 </div>
@@ -129,65 +130,95 @@ font-size: 16px;">
 <html>
 <head>
     <title>SIWES Introduction Letter</title>
-    <!-- PRINT STYLES -->
-    <style>
-        @media print {
-            @page {
-                size: A4;
-                margin: 0;
-            }
-
-            body {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-            body * {
-                visibility: hidden;
-            }
-
-            #print-area, #print-area * {
-                visibility: visible;
-            }
-
-            #print-area {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 1122px; /* A4 height at 96dpi */
-                overflow: hidden;
-                page-break-inside: avoid;
-                box-sizing: border-box;
-                padding: 20px;
-            }
-
-            .no-print {
-                display: none !important;
-            }
-
-            .letter-container {
-                page-break-inside: avoid;
-            }
-
-            img {
-                max-width: 100%;
-                height: auto;
-                display: block;
-            }
-
-            #sizer {
-                display: none !important;
-                width: auto !important;
-                height: auto !important;
-            }
+   <!-- PRINT STYLES -->
+<style>
+    @media print {
+        /* Hide elements you don't want to print. This removes them from the page flow. */
+        body > #wrapper > nav, /* Hides both top and side nav bars */
+        .no-print {
+            display: none !important;
         }
-    </style>
-</head>
-<body>
+
+        /* Basic resets to prevent unwanted space */
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Define the paper size and margins */
+        @page {
+            size: A4;
+            margin: 20px; /* Or set to 0 if you want no margin */
+        }
+        
+        /* Ensure the printable area is the only thing left and positioned correctly */
+        #print-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+            height: auto;
+        }
+    }
+    /* @media print {
+        body>#wrapper > nav
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        body * {
+            visibility: hidden;
+        }
+
+        #print-area, #print-area * {
+            visibility: visible;
+        }
+
+        #print-area {
+            width: 100%;
+            height: auto;
+            page-break-inside: avoid;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+
+        .letter-container {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #sizer {
+            display: none !important;
+            width: auto !important;
+            height: auto !important;
+        }
+    } */
+</style>
 
 <!-- ✅ PRINTABLE SECTION -->
 <div id="print-area">
+
     <!-- Print button INSIDE printable area (hidden when printed) -->
     <div class="no-print" style="margin: 10px 0; text-align: left;">
         <a href="javascript:void(0)" onclick="window.print()" class="btn btn-default" 
@@ -219,12 +250,13 @@ font-size: 16px;">
             </p>
         </div>
 
-        <div style="margin-top:20px;">
-            <p style="font-family:Times New Roman; font-size:15px;">
-                [Company Name]<br>
-                [Company Address]<br>
-            </p>
-        </div>
+       <div style="margin-top:20px;">
+    <p style="font-family:Times New Roman; font-size:15px;">
+        <?php echo ucwords($sup['company_name']); ?><br>
+        <?php echo $sup['company_address']; ?><br>
+    </p>
+</div>
+
 
         <br>
 
@@ -236,16 +268,17 @@ font-size: 16px;">
         </div>
 
         <br>
+<p style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
+    I hereby confirm that 
+    <b><?php echo ucwords($me['firstname'].' '.$me['lastname']); ?></b> 
+    is a student of Modibbo Adama University Yola, currently studying for the award of Degree
+    in Computer Science. According to the policy of Federal Government of Nigeria (FGN),
+    all undergraduate students of Computer Science are required to undergo SIWES in
+    a reputable establishment like yours. This is expected to give the students the opportunity
+    to acquire practical skills of IT, identify local IT needs and to help establishments by
+    providing IT supports.
+</p>
 
-        <p style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
-            I hereby confirm that <b>Lazarus Solomon</b> is a student
-            of Modibbo Adama University Yola, currently studying for the award of Degree
-            in Computer Science. According to the policy of Federal Government of Nigeria (FGN),
-            all undergraduate students of Computer Science are required to undergo SIWES in
-            a reputable establishment like yours. This is expected to give the students the opportunity
-            to acquire practical skills of IT, identify local IT needs and to help establishments by
-            providing IT supports.
-        </p>
 
         <p style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
             The student seeks your permission to undertake his/her SIWES in your establishment.
@@ -261,18 +294,27 @@ font-size: 16px;">
             I will be happy if you can please grant his/her request.
         </p>
 
-        <p style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
-            Please do not hesitate to contact me for further information about SIWES or about the student.
-        </p>
+       <p
+    style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
+    Please do not hesitate to contact me for further information about SIWES
+    or about the student.
+</p>
 
-        <div style="margin-top:30px;">
-            <p style="font-family:Times New Roman; font-weight:bold; color:black; font-size:16px;">
-                Sms Admin<br>
-                SIWES Coordinator<br>
-                Modibbo Adama University Yola,<br>
-                admin@admingmail.com
-            </p>
-        </div>
+<!-- Signature Section -->
+<div style="margin-top:40px; margin-bottom:20px;">
+    <img src="images/signature.png" alt="Signature" style="width:300px; height:auto;">
+    <br>
+  
+
+<div style="margin-top:10px;">
+    <p style="font-family:Times New Roman; font-weight:bold; color:black; font-size:16px;">
+        <?php echo ucwords($adm['firstname'].' '.$adm['lastname']); ?><br>
+        SIWES Coordinator<br>
+        Modibbo Adamawa University, Yola, Adamawa State<br>
+        <?php echo $adm['email']; ?>
+    </p>
+</div>
+
     </div>
 </div>
 </body>
