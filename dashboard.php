@@ -59,6 +59,7 @@ $me=mysqli_fetch_assoc($yat);
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="dashboard.php" style="font-size:18px;">Welcome, <?php echo ucfirst($me['firstname'])?></a> 
+    
             </div>
 		
             <div style="color: white;
@@ -140,7 +141,7 @@ $me=mysqli_fetch_assoc($yat);
         <a href="letter.php" style="text-decoration:none;">
             <div class="panel" style="background:#e67e22; color:white; border-radius:12px; height:160px; display:flex; flex-direction:column; justify-content:center; align-items:center; transition:0.3s;">
                 <i class="fa fa-envelope fa-3x" style="margin-bottom:10px;"></i>
-                <h4>Print Introduction</h4>
+                <h4>Print Introduction Letter</h4>
             </div>
         </a>
     </div>

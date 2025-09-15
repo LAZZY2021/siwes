@@ -274,7 +274,7 @@ e-mail: Computer.Science@lasu.edu.ng
                                                 <p style="font-family:Times New Roman; font-size:15px;">
                                                     The SIWES Coordinator<br>
                                                     Modibbo Adama University Yola,<br>
-                                                    Niger State<br>
+                                                    Adamawa State<br>
                                                     <?php echo $exp_org[1].' '.$exp_org[0].', '.$exp_org[2];?><br>
                                                 </p>
 
@@ -299,9 +299,9 @@ e-mail: Computer.Science@lasu.edu.ng
                                                 style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
                                                 I hereby confirm that
                                                 <b><?php echo ucwords($sut['firstname'].' '.$sut['lastname']) ?></b> is
-                                                a student of Modibbo Adama University Muhammed, currently studying for
+                                                a student of Modibbo Adama University (MAU),Yola currently studying for
                                                 the
-                                                award of National Diploma (ND).
+                                                award of degree.
                                                 in Computer Science. According to the policy of the Federal Government
                                                 of Nigeria (FGN),
                                                 all undergraduate students of Computer Science are required to undergo
@@ -330,20 +330,26 @@ e-mail: Computer.Science@lasu.edu.ng
                                                 I will be happy if you can please grant his/her request. </p>
 
                                             <p
-                                                style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
-                                                Please do not hesitate to contact me for further information about SIWES
-                                                or about the student.</p>
+    style="text-align:justify; font-family:Times New Roman; font-size:16px; color:black;">
+    Please do not hesitate to contact me for further information about SIWES
+    or about the student.
+</p>
+
+<!-- Signature Section -->
+<div style="margin-top:40px; margin-bottom:20px;">
+    <img src="assets/img/signature.png" alt="Signature" style="width:150px; height:auto;">
+    <br>
 
 
-                                            <div style="margin-top:40px;">
-                                                <p
-                                                    style="font-family:Times New Roman; font-weight:bold; color:black; font-size:16px;">
-                                                    <?php echo ucwords($adm['firstname'].' '.$adm['lastname']); ?><br>
-                                                    SIWES Coordinator<br>
-                                                    Modibbo Adamawa University, Niger State<br>
-                                                    <?php echo $adm['email']; ?>
-                                                </p>
-                                            </div>
+<div style="margin-top:10px;">
+    <p style="font-family:Times New Roman; font-weight:bold; color:black; font-size:16px;">
+        <?php echo ucwords($adm['firstname'].' '.$adm['lastname']); ?><br>
+        SIWES Coordinator<br>
+        Modibbo Adamawa University, Yola, Adamawa State<br>
+        <?php echo $adm['email']; ?>
+    </p>
+</div>
+
 
                                         </div>
 

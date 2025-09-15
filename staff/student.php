@@ -2,31 +2,67 @@
 include("../connect.php");
 session_start();
 if(!isset($_SESSION['sms_admin_id'])){
-	header("location:index.php");
+    header("location:index.php");
+    exit;
 }
 
+// Initialize error message
+$error = '';
+
+// Show any session message
+if(isset($_SESSION['msg'])){
+    $error = $_SESSION['msg'];
+    unset($_SESSION['msg']);
+}
+
+$date = date("d-F-Y h:i:sa");
+
+// Add new student
 if(isset($_POST['add'])){
-	$pop=mysqli_query($con,"select * from student where matric_no='".$_POST['matric_no']."'");
-	if(mysqli_num_rows($pop)==0){
-mysqli_query($con,"insert into student(firstname,lastname,matric_no,level,password,supervisor_id,reg_date) 
-values('".$_POST['firstname']."','".$_POST['lastname']."','".$_POST['matric_no']."','".$_POST['level']."','12345','".$_POST['supervisor']."','$date')");
-			$error='<div class="alert alert-success"><p style="font-size:16px; margin-top:-14px;"><i class="fa fa-check text-success"></i> Success! Student added successfully.</p></div>';
-	}else{
-		$error='<div class="alert alert-danger"><p style="font-size:16px; margin-top:-14px;"><i class="fa fa-warning text-yellow"></i> Oops! Student with Matric No exist.</p></div>';
-		
-	}
-	
+    $pop=mysqli_query($con,"SELECT * FROM student WHERE matric_no='".$_POST['matric_no']."'");
+    if(mysqli_num_rows($pop) == 0){
+        mysqli_query($con,"INSERT INTO student(firstname, lastname, matric_no, level, department, password, supervisor_id, reg_date) 
+        VALUES ('".$_POST['firstname']."','".$_POST['lastname']."','".$_POST['matric_no']."','".$_POST['level']."','".$_POST['department']."','12345','".$_POST['supervisor']."','$date')");
+        
+        $_SESSION['msg'] = '<div class="alert alert-success"><p style="font-size:16px; margin-top:-14px;">
+        <i class="fa fa-check text-success"></i> Success! Student added successfully.</p></div>';
+    } else {
+        $_SESSION['msg'] = '<div class="alert alert-danger"><p style="font-size:16px; margin-top:-14px;">
+        <i class="fa fa-warning text-yellow"></i> Oops! Student with Matric No exist.</p></div>';
+    }
+    header("Location: student.php");
+    exit;
 }
 
+
+// Delete single student
 if(isset($_GET['delete'])){
-	mysqli_query($con,"delete from student where id='".$_GET['delete']."'");
-	$error='<div class="alert alert-success"><p style="font-size:16px; margin-top:-14px;"><i class="fa fa-check text-success"></i> Success! Student deleted.</p></div>';
+    mysqli_query($con,"delete from student where id='".$_GET['delete']."'");
+    $_SESSION['msg'] = '<div class="alert alert-success"><p style="font-size:16px; margin-top:-14px;">
+    <i class="fa fa-check text-success"></i> Success! Student deleted.</p></div>';
+    header("Location: student.php");
+    exit;
 }
+
+// Clear all students
+if(isset($_GET['delete_all'])){
+    mysqli_query($con,"DELETE FROM student");
+    $_SESSION['msg'] = '<div class="alert alert-success"><p style="font-size:16px; margin-top:-14px;">
+    <i class="fa fa-check text-success"></i> Success! All students deleted.</p></div>';
+    header("Location: student.php");
+    exit;
+}
+
+// Update student info
 if(isset($_POST['update_student'])){
-	mysqli_query($con,"update student set supervisor_id='".$_POST['supervisor']."' where id='".$_POST['student_id']."'");
-	$error='<div class="alert alert-warning"><p style="font-size:16px; margin-top:-14px;"><i class="fa fa-check text-warning"></i> Success! Students info updated .</p></div>';
+    mysqli_query($con,"update student set supervisor_id='".$_POST['supervisor']."' where id='".$_POST['student_id']."'");
+    $_SESSION['msg'] = '<div class="alert alert-warning"><p style="font-size:16px; margin-top:-14px;">
+    <i class="fa fa-check text-warning"></i> Success! Student info updated.</p></div>';
+    header("Location: student.php");
+    exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -108,10 +144,16 @@ font-size: 16px;"><font style="font-size:23px; font-family:Bauhaus 93;">Siwes Ma
 				<?php echo $error; ?>
                     <!-- Advanced Tables -->
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-     <a href="javascript:void(0)" class="btn btn-default open_div"><i class="fa fa-plus"></i> Add New Student</a>
-     <a href="javascript:void(0)" class="btn btn-default close_div" style="display:none;"><i class="fa fa-times"></i> Close</a>
-     <a href="upload_students.php" class="btn btn-success"><i class="fa fa-upload"></i> Upload CSV</a>
+                       <div class="panel-heading" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <a href="javascript:void(0)" class="btn btn-default open_div"><i class="fa fa-plus"></i> Add New Student</a>
+        <a href="javascript:void(0)" class="btn btn-default close_div" style="display:none;"><i class="fa fa-times"></i> Close</a>
+        <a href="upload_students.php" class="btn btn-success"><i class="fa fa-upload"></i> Upload CSV</a>
+    </div>
+    <div>
+        <a href="?delete_all=1" onclick="return confirm('Are you sure you want to delete ALL students?')" 
+           class="btn btn-danger"><i class="fa fa-trash"></i> Clear All Students</a>
+    </div>
 </div>
 
 						
@@ -123,7 +165,8 @@ font-size: 16px;"><font style="font-size:23px; font-family:Bauhaus 93;">Siwes Ma
 						
 						
                         <div class="supervisor_div" style="margin-bottom:20px; border-bottom:1px solid lavender; padding-bottom:30px; display:none;">
-						<form role="form" method="post">
+						<form role="form" method="post" action="student.php">
+
               <div class="box-body">
 	<!--id 	firstname 	lastname 	matric_no 	level 	department 	password 	supervisor_id 	reg_date -->		  
 			  <div class="row">
@@ -154,18 +197,20 @@ font-size: 16px;"><font style="font-size:23px; font-family:Bauhaus 93;">Siwes Ma
 				 <div class="form-group">
                   <label for="exampleInputEmail1">Level</label>
 <select class="form-control" id="exampleInputEmail1" name="level" required>
-<option value="">--Select Level--</option>
-<!--<option value="100l">NDI</option>-->
-<option value="NDI">NDI</option>
-<!--<option value="300l">HNDI</option>-->
-<!--<option value="400l">HNDII</option>-->
-<!--<option value="500l">..</option>-->
-<!--<option value="600l">..</option>-->
-<!--<option value="700l">..</option>-->
+    <option value="">--Select Level--</option>
+    <option value="300">300 Level</option>
+    <option value="400">400 Level</option>
 </select>
+
+
                 </div>
                 </div>
                 </div>
+                    <div class="form-group">
+        <label for="department">Department</label>
+        <input type="text" class="form-control" name="department" id="department" required>
+    </div>
+
 		
 <div class="row">
 			  <div class="col-md-6">
@@ -223,27 +268,39 @@ font-size: 16px;"><font style="font-size:23px; font-family:Bauhaus 93;">Siwes Ma
                                         </tr>
                                     </thead>
                                     <tbody>
-									<?php $no;
-									$rap=mysqli_query($con,"select * from student order by firstname asc");
-									while($row=mysqli_fetch_assoc($rap)){
-										$rat=mysqli_query($con,"select * from supervisor where id='".$row['supervisor_id']."'");
-										$sp=mysqli_fetch_assoc($rat);
-										
-										$no=$no+1;
-										echo '<tr class="odd gradeX" id="'.$row['id'].'">
-                                            <td>'.$no.'</td>
-                                            <td>'.ucwords($row['firstname'].' '.$row['lastname']).'</td>
-                                            <td>'.$row['matric_no'].'</td>
-                                            <td>'.$row['level'].'</td>
-                                            <td>'.ucfirst($row['department']).'</td>
-                                            <td>'.$row['password'].'</td> 
-                                            <td>'.ucwords($sp['firstname'].' '.$sp['lastname']).'</td> 
-											<td>'.$row['reg_date'].'</td>
-                                            <td class="text-center"><a href="javascript:void(0)" id="'.$row['id'].'" data-toggle="modal" data-target="#myModal" style="font-size:17px;" class="text-success modify"><i class="fa fa-edit"></i></a></td>
-                                            <td class="text-center"><a href="?delete='.$row['id'].'" id="'.$row['id'].'" style="font-size:17px;" class="text-danger"><i class="fa fa-times-circle"></i></a></td>
-                                        </tr>';
-									} //<td class="text-center"><a href="letter.php?sid='.$row['id'].'" style="font-size:17px;" class="text-primary"><i class="fa fa-file-text"></i></a></td>
-									?>
+									<?php 
+$no = 0;
+$rap = mysqli_query($con,"
+    SELECT s.*, sup.firstname AS sup_firstname, sup.lastname AS sup_lastname
+    FROM student s
+    LEFT JOIN supervisor sup ON s.supervisor_id = sup.id
+    ORDER BY s.firstname ASC
+");
+while($row = mysqli_fetch_assoc($rap)){
+    $no++;
+    echo '<tr class="odd gradeX" id="'.$row['id'].'">
+        <td>'.$no.'</td>
+        <td>'.ucwords($row['firstname'].' '.$row['lastname']).'</td>
+        <td>'.$row['matric_no'].'</td>
+        <td>'.$row['level'].'</td>
+        <td>'.ucfirst($row['department']).'</td>
+        <td>'.$row['password'].'</td> 
+        <td>'.ucwords($row['sup_firstname'].' '.$row['sup_lastname']).'</td> 
+        <td>'.$row['reg_date'].'</td>
+        <td class="text-center">
+            <a href="javascript:void(0)" id="'.$row['id'].'" data-toggle="modal" data-target="#myModal" style="font-size:17px;" class="text-success modify">
+                <i class="fa fa-edit"></i>
+            </a>
+        </td>
+        <td class="text-center">
+            <a href="?delete='.$row['id'].'" id="'.$row['id'].'" style="font-size:17px;" class="text-danger">
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </td>
+    </tr>';
+}
+?>
+
                                         
                                     </tbody>
                                 </table>

@@ -102,5 +102,26 @@ if(isset($_POST['ori'])){
 		
 	}
 	 
+	// ================= Add New Student =================
+if (isset($_POST['add_student'])) {
+    $firstname   = mysqli_real_escape_string($con, $_POST['firstname']);
+    $lastname    = mysqli_real_escape_string($con, $_POST['lastname']);
+    $matric_no   = mysqli_real_escape_string($con, $_POST['matricno']);
+    $level       = mysqli_real_escape_string($con, $_POST['level']);
+    $department  = mysqli_real_escape_string($con, $_POST['department']); // NEW
+    $supervisor  = mysqli_real_escape_string($con, $_POST['supervisor']);
+    $password    = "12345"; // default password
+    $reg_date    = date("d-F-Y h:i:sa");
+
+    $query = "INSERT INTO student (firstname, lastname, matric_no, level, department, password, supervisor_id, reg_date) 
+              VALUES ('$firstname','$lastname','$matric_no','$level','$department','$password','$supervisor','$reg_date')";
+    
+    if (mysqli_query($con, $query)) {
+        echo '<div class="alert alert-success"><p>Student added successfully.</p></div>';
+    } else {
+        echo '<div class="alert alert-danger"><p>Error: ' . mysqli_error($con) . '</p></div>';
+    }
+}
+
 	 
 ?>

@@ -201,9 +201,19 @@ $tay=mysqli_query($con,"select * from approval where student_id='".$_SESSION['st
                 <a class="navbar-brand" href="dashboard.php" style="font-size:18px;">Welcome, <?php echo ucfirst($me['firstname'])?></a> 
             </div>
 		
-  <div style="color: white;
-padding: 15px 50px 5px 50px; text-align:center;
-font-size: 16px;"><font style="font-weight:bold; font-size:25px; font-family:Comic Sans MS;">SIWES MANAGEMENT SYSTEM</font><a href="logout.php" class="btn btn-danger square-btn-adjust" style="float: right;">Logout</a> </div>
+  <div style="color: white; padding: 15px 50px 5px 50px; text-align:center; font-size: 16px;">
+    <!-- Back Button (Left) -->
+    <a href="dashboard.php" class="btn btn-danger square-btn-adjust" style="float: left; margin-left:10px;">Back</a>
+    
+    <!-- Title -->
+    <font style="font-weight:bold; font-size:25px; font-family:Comic Sans MS;">
+        SIWES MANAGEMENT SYSTEM
+    </font>
+    
+    <!-- Logout Button (Right) -->
+    <a href="logout.php" class="btn btn-danger square-btn-adjust" style="float: right;">Logout</a>
+</div>
+
         </nav>   
            <!-- /. NAV TOP  -->
                 <nav class="navbar-default navbar-side" role="navigation">

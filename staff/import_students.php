@@ -1,6 +1,6 @@
-<?php
-include("../connect.php"); // adjust path if needed
-require __DIR__ . '/../vendor/autoload.php'; // Composer autoload
+<?php 
+include("../connect.php"); 
+require __DIR__ . '/../vendor/autoload.php'; 
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -17,33 +17,67 @@ if (isset($_POST['upload'])) {
         }
 
         try {
-            // load Excel/CSV file
             $spreadsheet = IOFactory::load($fileTmpPath);
             $sheet = $spreadsheet->getActiveSheet();
             $rows = $sheet->toArray();
 
-            // Skip header row (row 0)
+            $date = date("d-F-Y h:i:sa");
+            $inserted = 0;
+            $skipped = 0;
+            $skippedList = [];
+
+            // Skip header row
             for ($i = 1; $i < count($rows); $i++) {
                 $row = $rows[$i];
 
-                // match your dummy_students.xlsx columns
-                $fullname   = mysqli_real_escape_string($con, $row[1]); // Fullname
-                $matric     = mysqli_real_escape_string($con, $row[2]); // Matric No
-                $level      = mysqli_real_escape_string($con, $row[3]); // Level
-                $dept       = mysqli_real_escape_string($con, $row[4]); // Department
-                $password   = mysqli_real_escape_string($con, $row[5]); // Password
-                $supervisor = mysqli_real_escape_string($con, $row[6]); // Supervisor
-                $regdate    = mysqli_real_escape_string($con, $row[7]); // Reg date
+                $firstname   = mysqli_real_escape_string($con, $row[0]);
+                $lastname    = mysqli_real_escape_string($con, $row[1]);
+                $matric      = mysqli_real_escape_string($con, $row[2]);
+                $level       = mysqli_real_escape_string($con, $row[3]);
+                $department  = mysqli_real_escape_string($con, $row[4]);
 
-                // insert into database (adjust table/fields to match yours)
+                $password = "12345"; // default password
+
+                // skip if matric is empty
+                if ($matric === '') {
+                    $skipped++;
+                    $skippedList[] = "(empty)";
+                    continue;
+                }
+
+                // check if matric_no already exists
+                $check = mysqli_query($con, "SELECT id FROM student WHERE matric_no='".$matric."'");
+                if (mysqli_num_rows($check) > 0) {
+                    $skipped++;
+                    $skippedList[] = $matric;
+                    continue;
+                }
+
+                // 👇 Pick supervisor with least students (auto assign)
+                $supervisorQuery = mysqli_query($con, "
+                    SELECT id FROM supervisor 
+                    ORDER BY (SELECT COUNT(*) FROM student WHERE student.supervisor_id = supervisor.id) ASC 
+                    LIMIT 1
+                ");
+                $supervisorRow = mysqli_fetch_assoc($supervisorQuery);
+                $supervisor_id = $supervisorRow['id'] ?? null;
+
+                // Insert new student
                 $query = "
-                    INSERT INTO student (fullname, matric_no, level, department, password, supervisor, reg_date)
-                    VALUES ('$fullname', '$matric', '$level', '$dept', '$password', '$supervisor', '$regdate')
+                    INSERT INTO student (firstname, lastname, matric_no, level, department, password, supervisor_id, reg_date)
+                    VALUES ('$firstname', '$lastname', '$matric', '$level', '$department', '$password', '$supervisor_id', '$date')
                 ";
-                mysqli_query($con, $query);
+                mysqli_query($con, $query) or die(mysqli_error($con));
+                $inserted++;
             }
 
-            echo "<script>alert('Students imported successfully'); window.location='student.php';</script>";
+            // Prepare skipped message
+            $skippedMessage = "";
+            if ($skipped > 0) {
+                $skippedMessage = "\\nSkipped (" . $skipped . "): " . implode(", ", $skippedList);
+            }
+
+            echo "<script>alert('Import complete: $inserted added. $skipped skipped.$skippedMessage'); window.location='student.php';</script>";
 
         } catch (Exception $e) {
             die("Error loading file: " . $e->getMessage());
